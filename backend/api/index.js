@@ -14,6 +14,7 @@ import {
   save,
   setStore,
 } from "./service";
+import { log } from "console";
 
 const app = express();
 
@@ -49,6 +50,7 @@ const authed = (fn) => async (req, res) => {
 app.post(
   "/admin/auth/login",
   catchErrors(async (req, res) => {
+    console.log("login request...");
     const { email, password } = req.body;
     const token = await login(email, password);
     return res.json({ token });
