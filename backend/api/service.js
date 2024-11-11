@@ -74,7 +74,8 @@ try {
       .then((response) => response.json())
       .then((data) => {
         log("admins:", data)
-        admins = data.result; // remember to use result instead of `value`
+        admins = JSON.parse(data.result); // remember to use result instead of `value`
+        // and remember to parse...
       });
   } else {
     // Read from local file
