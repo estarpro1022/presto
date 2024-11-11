@@ -64,6 +64,7 @@ export const reset = () => {
 
 try {
   if (USE_VERCEL_KV) {
+    log("initial admins: ", admins);
     // Read from Vercel KV
     fetch(`${KV_REST_API_URL}/get/admins`, {
       headers: {
