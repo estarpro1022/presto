@@ -3,6 +3,7 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import { AccessError, InputError } from "./error";
 import fetch from 'node-fetch';
+import { log } from "console";
 
 const lock = new AsyncLock();
 
@@ -71,6 +72,7 @@ try {
     })
       .then((response) => response.json())
       .then((data) => {
+        log("admins:", data)
         admins = data.value;
       });
   } else {
