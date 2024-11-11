@@ -14,6 +14,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useLocation, useNavigate } from "react-router-dom";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import YouTubePlayer from "../components/YoutubePlayer";
 
 export default function Preview() {
   const location = useLocation();
@@ -29,17 +30,17 @@ export default function Preview() {
       value: "#ffffff",
     };
     switch (appliedBackground.type) {
-    case "solid":
-      return { backgroundColor: appliedBackground.value };
-    case "gradient":
-      return { backgroundImage: appliedBackground.value };
-    case "image":
-      return {
-        backgroundImage: `url(${appliedBackground.value})`,
-        backgroundSize: "cover",
-      };
-    default:
-      return { backgroundColor: "#ffffff" };
+      case "solid":
+        return { backgroundColor: appliedBackground.value };
+      case "gradient":
+        return { backgroundImage: appliedBackground.value };
+      case "image":
+        return {
+          backgroundImage: `url(${appliedBackground.value})`,
+          backgroundSize: "cover",
+        };
+      default:
+        return { backgroundColor: "#ffffff" };
     }
   };
 
@@ -121,13 +122,9 @@ export default function Preview() {
                     cursor: "pointer",
                   }}
                 >
-                  <video
-                    controls
-                    width="100%"
-                    height="100%"
+                  <YouTubePlayer
+                    videoUrl={element.url}
                     autoPlay={element.autoplay}
-                    src={element.url}
-                    style={{ display: "block" }}
                   />
                 </Box>
               );
