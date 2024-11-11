@@ -116,9 +116,12 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // const port = "BACKEND_PORT" in configData ? configData.BACKEND_PORT : 5000;
 const port = 5005;
 
-const server = app.listen(port, () => {
-  console.log(`Backend is now listening on port ${port}!`);
-  console.log(`For API docs, navigate to http://localhost:${port}`);
-});
+// const server = app.listen(port, () => {
+//   console.log(`Backend is now listening on port ${port}!`);
+//   console.log(`For API docs, navigate to http://localhost:${port}`);
+// });
+const server = (req, res) => {
+  app(req, res);  // 将 Vercel 请求传递给 Express 应用
+};
 
 export default server;
