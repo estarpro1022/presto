@@ -48,6 +48,7 @@ import ImageDialog from "../components/ImageDialog";
 import VideoDialog from "../components/VideoDialog";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import CodeDialog from "../components/CodeDialog";
+import YouTubePlayer from "../components/YoutubePlayer";
 
 const theme = createTheme({
   palette: {
@@ -585,14 +586,15 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
                   setMenuAnchor(e.currentTarget);
                 }}
               >
-                <video
+                <YouTubePlayer videoUrl={element.url} autoPlay={element.autoplay} />
+                {/* <video
                   controls
                   width="100%"
                   height="100%"
                   autoPlay={element.autoplay}
                   src={element.url}
                   style={{ display: "block" }}
-                />
+                /> */}
               </Box>
             );
           } else if (element.type === "code") {
