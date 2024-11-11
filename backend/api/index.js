@@ -15,6 +15,7 @@ import {
   setStore,
 } from "./service";
 import { log } from "console";
+import fetch from 'node-fetch';
 
 const app = express();
 

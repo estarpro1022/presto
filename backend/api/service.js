@@ -2,6 +2,7 @@ import AsyncLock from "async-lock";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import { AccessError, InputError } from "./error";
+import fetch from 'node-fetch';
 
 const lock = new AsyncLock();
 
