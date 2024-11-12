@@ -14,6 +14,7 @@ import {
   save,
   setStore,
 } from "./service";
+import { log } from "console";
 const { PROD_BACKEND_PORT, USE_VERCEL_KV } = process.env;
 
 const app = express();
@@ -60,6 +61,7 @@ app.post(
   "/admin/auth/register",
   catchErrors(async (req, res) => {
     const { email, password, name } = req.body;
+    log(`email: ${email}, password: ${password}, name: ${name}`);
     const token = await register(email, password, name);
     return res.json({ token });
   })
@@ -84,6 +86,7 @@ app.get(
   catchErrors(
     authed(async (req, res, email) => {
       const store = await getStore(email);
+      log("store:", store);
       return res.json({ store });
     })
   )
@@ -94,6 +97,8 @@ app.put(
   catchErrors(
     authed(async (req, res, email) => {
       await setStore(email, req.body.store);
+      log("request body:", req.body);
+      log("request body store:", req.body.store);
       return res.json({});
     })
   )

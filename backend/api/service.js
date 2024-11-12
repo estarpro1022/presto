@@ -2,6 +2,7 @@ import AsyncLock from "async-lock";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import { AccessError, InputError } from "./error";
+import { log } from "console";
 
 const lock = new AsyncLock();
 
@@ -18,10 +19,12 @@ const sessionTimeouts = {};
 
 const update = async (admins) =>
   new Promise((resolve, reject) => {
+    log("Update database:", admins);
     lock.acquire("saveData", async () => {
       try {
         if (USE_VERCEL_KV) {
           // Store to Vercel KV
+          log("I'm going to write to KV");
           const response = await fetch(`${KV_REST_API_URL}/set/admins`, {
             method: "POST",
             headers: {
@@ -47,7 +50,7 @@ const update = async (admins) =>
           );
         }
         resolve();
-      } catch(error) {
+      } catch (error) {
         console.log(error);
         reject(new Error("Writing to database failed"));
       }
@@ -73,14 +76,16 @@ try {
     })
       .then((response) => response.json())
       .then((data) => {
+        log("Got admins from KV:", JSON.parse(data.result));
         admins = JSON.parse(data.result)["admins"];
+        log("admins:", admins);
       });
   } else {
     // Read from local file
     const data = JSON.parse(fs.readFileSync(DATABASE_FILE));
     admins = data.admins;
   }
-} catch(error) {
+} catch (error) {
   console.log("WARNING: No database found, create a new one");
   save();
 }
@@ -106,7 +111,7 @@ export const getEmailFromAuthorization = (authorization) => {
       throw new AccessError("Invalid Token");
     }
     return email;
-  } catch(error) {
+  } catch (error) {
     throw new AccessError("Invalid token");
   }
 };
