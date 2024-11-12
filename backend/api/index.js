@@ -117,5 +117,6 @@ const port = USE_VERCEL_KV
   : JSON.parse(fs.readFileSync("../frontend/backend.config.json")).BACKEND_PORT;
 
 app.listen(port, () => {
+  log("Use KV:", USE_VERCEL_KV);
   console.log(`For API docs, navigate to http://localhost:${port}`);
 });

@@ -78,9 +78,11 @@ const TextDialog = ({
       text: textContent,
       fontSize,
       color: textColor,
-      fontFamily,
       position: { ...position },
     };
+    if (edit) {
+      data.fontFamily = fontFamily;
+    }
     console.log("save data:", data);
 
     onSave(data);

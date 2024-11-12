@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import Reptile from "../assets/contemplative-reptile.jpg";
+import Grey from "../assets/grey.png";
 import { useNavigate } from "react-router-dom";
 
 export default function PreCard({ pre }) {
@@ -23,9 +23,9 @@ export default function PreCard({ pre }) {
         <CardMedia
           component="img"
           alt="thumbnail"
-          image={pre.thumbnail || Reptile}
+          image={pre.thumbnail || Grey}
           sx={{
-            height: { xs: 50, sm: 110}
+            height: { xs: 50, sm: 120}
           }}
         />
         <CardContent>

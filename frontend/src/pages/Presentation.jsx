@@ -233,6 +233,7 @@ function UploadThumbnailDialog({ pre, setPre, open, setOpen }) {
         <TextField
           id="thumbnail"
           autoFocus
+          placeholder="e.g. https://i.imgur.com/NhyZlnJ.png"
           label="url"
           value={thumbnail}
           onChange={(e) => setThumbnail(e.target.value)}
@@ -327,7 +328,7 @@ function SetBackgroundDialog({ pre, setPre, open, setOpen }) {
         {backgroundType === "image" && (
           <TextField
             label="Image URL"
-            placeholder="Enter image URL"
+            placeholder="e.g. https://i.imgur.com/yBReAgV.png"
             value={backgroundValue}
             onChange={handleBackgroundValueChange}
             fullWidth
@@ -448,17 +449,17 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
       value: "#ffffff",
     };
     switch (appliedBackground.type) {
-    case "solid":
-      return { backgroundColor: appliedBackground.value };
-    case "gradient":
-      return { backgroundImage: appliedBackground.value };
-    case "image":
-      return {
-        backgroundImage: `url(${appliedBackground.value})`,
-        backgroundSize: "cover",
-      };
-    default:
-      return { backgroundColor: "#ffffff" };
+      case "solid":
+        return { backgroundColor: appliedBackground.value };
+      case "gradient":
+        return { backgroundImage: appliedBackground.value };
+      case "image":
+        return {
+          backgroundImage: `url(${appliedBackground.value})`,
+          backgroundSize: "cover",
+        };
+      default:
+        return { backgroundColor: "#ffffff" };
     }
   };
 
@@ -522,7 +523,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
                   setMenuAnchor(e.currentTarget);
                 }}
               >
-                <Typography sx={{ fontFamily: element.fontFamily }}>
+                <Typography sx={{ fontFamily: pre.fontFamily }}>
                   {element.text}
                 </Typography>
                 {/* {element.text} */}
@@ -586,7 +587,10 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
                   setMenuAnchor(e.currentTarget);
                 }}
               >
-                <YouTubePlayer videoUrl={element.url} autoPlay={element.autoplay} />
+                <YouTubePlayer
+                  videoUrl={element.url}
+                  autoPlay={element.autoplay}
+                />
                 {/* <video
                   controls
                   width="100%"
@@ -667,12 +671,15 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
         }}
         onSave={async (data) => {
           data.layer = elements.length;
+          const fontFamily = data.fontFamily || pre.fontFamily;
+          delete data.fontFamily;
           if (addText) {
             // 添加文字
             // elements是单张幻灯片的所有内容
             elements.push(data);
             const newPre = {
               ...pre,
+              fontFamily,
               slides: pre.slides.map((slide, index) =>
                 index === current ? elements : slide
               ),
@@ -692,6 +699,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
 
             const newPre = {
               ...pre,
+              fontFamily,
               slides: pre.slides.map((slide, index) =>
                 index === current ? newElements : slide
               ),
@@ -830,6 +838,7 @@ export default function Presentation() {
   const [goBack, setGoBack] = useState(false);
   const [uploadThumbnail, setUploadThumbnail] = useState(false);
   const [background, setBackground] = useState(false);
+  const [preview, setPreview] = useState(false);
   const slides = pre?.slides;
 
   useEffect(() => {
@@ -905,7 +914,10 @@ export default function Presentation() {
           </IconButton>
         </Tooltip>
         <Tooltip title="upload thumbnail">
-          <IconButton onClick={() => setUploadThumbnail(true)} id="upload-thumbnail">
+          <IconButton
+            onClick={() => setUploadThumbnail(true)}
+            id="upload-thumbnail"
+          >
             <CloudUploadIcon />
           </IconButton>
         </Tooltip>
@@ -1051,15 +1063,41 @@ export default function Presentation() {
           left: 24,
         }}
         onClick={() => {
-          navigate(`/presentation/${pre.id}/preview`, {
-            state: {
-              pre
-            }
-          });
+          // navigate(`/presentation/${pre.id}/preview`, {
+          //   state: {
+          //     pre
+          //   }
+          // });
+          setPreview(true);
         }}
       >
         <VisibilityIcon />
       </IconButton>
+
+      <Dialog open={preview} onClose={() => setPreview(false)} fullWidth>
+        <DialogTitle>Save before Preview</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please click the right top save button first, or you will lose
+            current data
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPreview(false)}>OK, I will do that</Button>
+          <Button
+            onClick={() => {
+              navigate(`/presentation/${pre.id}/preview`, {
+                state: {
+                  pre,
+                },
+              });
+            }}
+            variant="contained"
+          >
+            Already Save!
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* 幻灯片数字 */}
       <Box

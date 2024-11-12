@@ -27,6 +27,7 @@ function DashboardSidebar({ pres, setPres }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
@@ -51,7 +52,7 @@ function DashboardSidebar({ pres, setPres }) {
       id: pres.length,
       name: name,
       description: description,
-      thumbnail: null,
+      thumbnail: thumbnail,
       slides: [[]], // empty slide
     };
     const newPres = [pre, ...pres];
@@ -76,7 +77,7 @@ function DashboardSidebar({ pres, setPres }) {
       <Toolbar />
 
       {/* Dialog */}
-      <Dialog open={open} onClose={closeDialog}>
+      <Dialog open={open} onClose={closeDialog} fullWidth maxWidth="xs">
         <DialogTitle>Create New Presentations</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column" }}>
           <TextField
@@ -87,6 +88,7 @@ function DashboardSidebar({ pres, setPres }) {
             onChange={(e) => setName(e.target.value)}
             required
             autoComplete="off"
+            fullWidth
             error={error}
             helperText={error ? "name can't be empty" : ""}
             margin="normal"
@@ -97,6 +99,17 @@ function DashboardSidebar({ pres, setPres }) {
             value={description}
             onChange={(e) => {
               setDescription(e.target.value);
+            }}
+            margin="normal"
+            autoComplete="off"
+          ></TextField>
+          <TextField
+            id="thumbnail"
+            label="thumbnail"
+            value={thumbnail}
+            placeholder="e.g. https://i.imgur.com/NhyZlnJ.png"
+            onChange={(e) => {
+              setThumbnail(e.target.value);
             }}
             margin="normal"
             autoComplete="off"

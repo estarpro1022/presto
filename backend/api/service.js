@@ -3,12 +3,16 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import { AccessError, InputError } from "./error";
 import { log } from "console";
+import fetch from "node-fetch"
 
 const lock = new AsyncLock();
 
 const JWT_SECRET = "llamallamaduck";
 const DATABASE_FILE = "./database.json";
-const { KV_REST_API_URL, KV_REST_API_TOKEN, USE_VERCEL_KV } = process.env;
+// const { KV_REST_API_URL, KV_REST_API_TOKEN, USE_VERCEL_KV } = process.env;
+// const KV_REST_API_TOKEN = "AXS5AAIjcDFiODVkYWU1ZmUwY2E0ODBiYTBiNzU1ZmY2OWRlNjU1MnAxMA"
+// const KV_REST_API_URL = "https://sensible-hamster-29881.upstash.io"
+const USE_VERCEL_KV = false;
 /***************************************************************
                        State Management
 ***************************************************************/
@@ -38,6 +42,7 @@ const update = async (admins) =>
           }
         } else {
           // Store to local file system
+          log("I'm going to write to local database")
           fs.writeFileSync(
             DATABASE_FILE,
             JSON.stringify(
