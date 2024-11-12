@@ -14,8 +14,7 @@ import {
   save,
   setStore,
 } from "./service";
-import { log } from "console";
-import fetch from 'node-fetch';
+const { PROD_BACKEND_PORT, USE_VERCEL_KV } = process.env;
 
 const app = express();
 
@@ -51,7 +50,6 @@ const authed = (fn) => async (req, res) => {
 app.post(
   "/admin/auth/login",
   catchErrors(async (req, res) => {
-    console.log("login request...");
     const { email, password } = req.body;
     const token = await login(email, password);
     return res.json({ token });
@@ -109,19 +107,10 @@ app.get("/", (req, res) => res.redirect("/docs"));
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// const configData = JSON.parse(
-//   fs.readFileSync("../frontend/backend.config.json")
-// );
+const port = USE_VERCEL_KV
+  ? PROD_BACKEND_PORT
+  : JSON.parse(fs.readFileSync("../frontend/backend.config.json")).BACKEND_PORT;
 
-// const port = "BACKEND_PORT" in configData ? configData.BACKEND_PORT : 5000;
-const port = 5005;
-
-// const server = app.listen(port, () => {
-//   console.log(`Backend is now listening on port ${port}!`);
-//   console.log(`For API docs, navigate to http://localhost:${port}`);
-// });
-const server = (req, res) => {
-  app(req, res);  // 将 Vercel 请求传递给 Express 应用
-};
-
-export default server;
+app.listen(port, () => {
+  console.log(`For API docs, navigate to http://localhost:${port}`);
+});

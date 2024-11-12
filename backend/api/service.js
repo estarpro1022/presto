@@ -2,8 +2,6 @@ import AsyncLock from "async-lock";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import { AccessError, InputError } from "./error";
-import fetch from 'node-fetch';
-import { log } from "console";
 
 const lock = new AsyncLock();
 
@@ -64,7 +62,9 @@ export const reset = () => {
 
 try {
   if (USE_VERCEL_KV) {
-    log("initial admins: ", admins);
+    // Setup default admin object in KV DB
+    save();
+
     // Read from Vercel KV
     fetch(`${KV_REST_API_URL}/get/admins`, {
       headers: {
@@ -73,9 +73,7 @@ try {
     })
       .then((response) => response.json())
       .then((data) => {
-        log("admins:", data)
-        admins = JSON.parse(data.result); // remember to use result instead of `value`
-        // and remember to parse...
+        admins = JSON.parse(data.result)["admins"];
       });
   } else {
     // Read from local file
