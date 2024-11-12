@@ -9,10 +9,10 @@ const lock = new AsyncLock();
 
 const JWT_SECRET = "llamallamaduck";
 const DATABASE_FILE = "./database.json";
-// const { KV_REST_API_URL, KV_REST_API_TOKEN, USE_VERCEL_KV } = process.env;
+const { KV_REST_API_URL, KV_REST_API_TOKEN, USE_VERCEL_KV } = process.env;
 // const KV_REST_API_TOKEN = "AXS5AAIjcDFiODVkYWU1ZmUwY2E0ODBiYTBiNzU1ZmY2OWRlNjU1MnAxMA"
 // const KV_REST_API_URL = "https://sensible-hamster-29881.upstash.io"
-const USE_VERCEL_KV = false;
+// const USE_VERCEL_KV = false;
 /***************************************************************
                        State Management
 ***************************************************************/
