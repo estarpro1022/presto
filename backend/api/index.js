@@ -38,6 +38,20 @@ const catchErrors = (fn) => async (req, res) => {
     }
   }
 };
+const catchGetErrors = (fn) => async (req, res) => {
+  try {
+    await fn(req, res);
+  } catch (err) {
+    if (err instanceof InputError) {
+      res.status(400).send({ error: err.message });
+    } else if (err instanceof AccessError) {
+      res.status(403).send({ error: err.message });
+    } else {
+      console.log(err);
+      res.status(500).send({ error: "A system error ocurred" });
+    }
+  }
+};
 
 /***************************************************************
                        Auth Function
@@ -83,7 +97,7 @@ app.post(
 
 app.get(
   "/store",
-  catchErrors(
+  catchGetErrors(
     authed(async (req, res, email) => {
       const store = await getStore(email);
       log("store:", store);
