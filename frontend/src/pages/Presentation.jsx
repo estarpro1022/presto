@@ -23,6 +23,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useSpring, animated } from "@react-spring/web";
 import { useNavigate } from "react-router-dom";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -835,6 +836,7 @@ export default function Presentation() {
   const [toDeleteSlide, setToDeleteSlide] = useState(false);
   const [modifyName, setModifyName] = useState(false);
   const [current, setCurrent] = useState(0);
+  const [, setDirection] = useState("left");
   const [goBack, setGoBack] = useState(false);
   const [uploadThumbnail, setUploadThumbnail] = useState(false);
   const [background, setBackground] = useState(false);
@@ -847,6 +849,12 @@ export default function Presentation() {
     }
   });
 
+  const [slideProps, set] = useSpring(() => ({
+    transform: "translateX(0%)", // 初始状态: 当前幻灯片处于中间
+    opacity: 1,
+    config: { tension: 300, friction: 30 },
+  }));
+
   const savePre = (updatedPre) => {
     sessionStorage.setItem("pre", JSON.stringify(updatedPre));
     const newPres = pres.map((p) => (p.id === updatedPre.id ? updatedPre : p));
@@ -855,7 +863,7 @@ export default function Presentation() {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, height: "100%" }}>
+    <Box sx={{ flexGrow: 1, height: "100%", overflow: "hidden" }}>
       <DeletePreDialog
         pre={pre}
         toDeletePre={toDeletePre}
@@ -966,24 +974,38 @@ export default function Presentation() {
       </Box>
 
       {/* 画布 */}
-      <Slide
-        pre={pre}
-        setPre={setPre}
-        current={current}
-        setCurrent={setCurrent}
-        props={{
-          modifyName,
-          uploadThumbnail,
-          background,
+      <animated.div
+        style={{
+          ...slideProps,
         }}
-      />
+      >
+        <Slide
+          pre={pre}
+          setPre={setPre}
+          current={current}
+          setCurrent={setCurrent}
+          props={{
+            modifyName,
+            uploadThumbnail,
+            background,
+          }}
+        />
+      </animated.div>
 
       {/* 左箭头 */}
       <IconButton
         id="left-arrow"
         sx={{ position: "absolute", bottom: "50%", left: 0 }}
         disabled={current <= 0}
-        onClick={() => setCurrent(current - 1)}
+        onClick={() => {
+          set({ transform: "translateX(100%)", opacity: 0 });
+          setTimeout(() => {
+            set({ transform: "translateX(-100%)", opacity: 0, immediate: true }); // 这里添加了 immediate: true
+            setCurrent(current - 1);
+            setDirection("right");
+            set({ transform: "translateX(0%)", opacity: 1 });
+          }, 300); // 300ms 等待当前幻灯片完全消失
+        }}
       >
         <ArrowBackIosIcon />
       </IconButton>
@@ -993,7 +1015,15 @@ export default function Presentation() {
         id="right-arrow"
         sx={{ position: "absolute", bottom: "50%", right: 0 }}
         disabled={current >= slides.length - 1}
-        onClick={() => setCurrent(current + 1)}
+        onClick={() => {
+          set({ transform: "translateX(-100%)", opacity: 0 });
+          setTimeout(() => {
+            set({ transform: "translateX(100%)", opacity: 0, immediate: true }); // 这里添加了 immediate: true
+            setCurrent(current + 1);
+            setDirection("left");
+            set({ transform: "translateX(0%)", opacity: 1 });
+          }, 300); // 300ms 等待当前幻灯片完全消失
+        }}
       >
         <ArrowForwardIosIcon />
       </IconButton>
@@ -1074,6 +1104,7 @@ export default function Presentation() {
         <VisibilityIcon />
       </IconButton>
 
+      {/* 预览Dialog */}
       <Dialog open={preview} onClose={() => setPreview(false)} fullWidth>
         <DialogTitle>Save before Preview</DialogTitle>
         <DialogContent>
