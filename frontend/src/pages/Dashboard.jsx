@@ -73,7 +73,7 @@ function DashboardSidebar({ pres, setPres }) {
         },
       }}
     >
-      {/* 添加一个 Toolbar 占位符，使得 Drawer 在 AppBar 下方对齐 */}
+      {/* Add a Toolbar to align */}
       <Toolbar />
 
       {/* Dialog */}

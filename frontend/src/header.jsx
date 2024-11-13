@@ -22,7 +22,7 @@ function Header() {
             color="inherit"
             component={Link}
             to="/"
-            sx={{ fontSize: "15px", mr: 1, textTransform: "none" }}
+            sx={{ fontSize: "15px", mr: {xs: 0, md: 1}, textTransform: "none" }}
           >
             Home
           </Button>
@@ -47,7 +47,7 @@ function Header() {
                 color="inherit"
                 component={Link}
                 to="/login"
-                sx={{ fontSize: "15px", mx: 1, textTransform: "none" }}
+                sx={{ fontSize: "15px", ml: 1, textTransform: "none" }}
               >
                 Login
               </Button>

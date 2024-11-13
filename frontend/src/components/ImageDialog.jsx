@@ -72,7 +72,6 @@ export default function ImageDialog({
 
   const handleSubmit = () => {
     // Submission logic, handle image size, URL/base64 encoding, and `alt` description
-    // TODO
     const data = {
       id: Date.now(),
       type: "image",

@@ -2,7 +2,7 @@
 
 #### 1. **CodeDialog Component Test**
 
-**Objective**:  
+**Objective**: 
 Validate the rendering, interactions, and callback logic of the `CodeDialog` component.
 
 **Test Cases**:
@@ -39,7 +39,7 @@ Validate the rendering, interactions, and callback logic of the `CodeDialog` com
 
 #### 2. **Home Component Test**
 
-**Objective**:  
+**Objective**:
 Validate that the `Home` component renders correctly, with proper styling and content.
 
 **Test Cases**:
@@ -66,7 +66,7 @@ Validate that the `Home` component renders correctly, with proper styling and co
 
 #### 3. **PreCard Component Test**
 
-**Objective**:  
+**Objective**:
 Validate that the `PreCard` component renders correctly and navigates as expected when clicked.
 
 **Test Cases**:
@@ -90,7 +90,7 @@ Validate that the `PreCard` component renders correctly and navigates as expecte
 
 ### UI Testing Documentation (using Cypress)
 
-**Objective**:  
+**Objective**:
 Test the entire application’s user interactions and workflows to ensure that the app behaves correctly for users. This includes testing user registration, presentation creation, updating names and thumbnails, and deletion.
 
 **Test Cases**:

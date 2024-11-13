@@ -9,7 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/setup.js",
     exclude: ["node_modules", "dist", ".cache"],
-    include: ["src/**/*.test.{js,ts,jsx,tsx}"], // 指定测试文件路径
+    include: ["src/**/*.test.{js,ts,jsx,tsx}"], 
   },
   server: {
     port: 3000,

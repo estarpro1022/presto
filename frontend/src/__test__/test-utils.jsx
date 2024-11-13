@@ -4,7 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
 import { PresentationProvider } from '../context/PresentationContext';
 
-// 自定义 render 函数
 const customRender = (ui, options) => {
   return render(
     <BrowserRouter>

@@ -50,7 +50,6 @@ const CodeDialog = ({
   };
 
   const identify = (codeSnippet) => {
-    // 简单实现自动识别语言的逻辑，可以用更多的分析方法进行细化
     if (codeSnippet.includes('#include') || codeSnippet.includes('int main')) {
       return 'c';
     } else if (codeSnippet.includes('import') || codeSnippet.includes('def ')) {

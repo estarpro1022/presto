@@ -228,8 +228,15 @@ function UploadThumbnailDialog({ pre, setPre, open, setOpen }) {
   };
 
   return (
-    <Dialog open={open} onClose={closeDialog} fullWidth maxWidth="xs">
-      <DialogTitle>Upload Thumbnail</DialogTitle>
+    <Dialog
+      role="dialog"
+      aria-labelledby="upload-thumbnail-title"
+      open={open}
+      onClose={closeDialog}
+      fullWidth
+      maxWidth="xs"
+    >
+      <DialogTitle id="upload-thumbnail-title">Upload Thumbnail</DialogTitle>
       <DialogContent>
         <TextField
           id="thumbnail"
@@ -244,11 +251,18 @@ function UploadThumbnailDialog({ pre, setPre, open, setOpen }) {
           error={error}
           helperText={error ? "url can't be empty" : ""}
           margin="normal"
+          aria-invalid={error}
+          aria-describedby="thumbnail-helper-text"
         ></TextField>
+        <small id="thumbnail-helper-text" style={{ visibility: "hidden" }}>
+          Please enter a valid URL for the thumbnail image.
+        </small>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeDialog}>Cancel</Button>
-        <Button onClick={upload} variant="contained">
+        <Button onClick={closeDialog} aria-label="Cancel">
+          Cancel
+        </Button>
+        <Button onClick={upload} variant="contained" aria-label="Create">
           Create
         </Button>
       </DialogActions>
@@ -348,7 +362,7 @@ function SetBackgroundDialog({ pre, setPre, open, setOpen }) {
 }
 
 function Slide({ pre, setPre, current, setCurrent, props }) {
-  const { modifyName, uploadThumbnail, background } = props;
+  const { modifyName, uploadThumbnail, background, set: setAnimation } = props;
   const elements = pre.slides[current];
   const slides = pre.slides;
 
@@ -369,11 +383,29 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
     const handleKeyDown = (event) => {
       if (event.key === "ArrowLeft") {
         if (current !== 0) {
-          setCurrent(current - 1);
+          setAnimation({ transform: "translateX(100%)", opacity: 0 });
+          setTimeout(() => {
+            setAnimation({
+              transform: "translateX(-100%)",
+              opacity: 0,
+              immediate: true,
+            }); 
+            setCurrent(current - 1);
+            setAnimation({ transform: "translateX(0%)", opacity: 1 });
+          }, 300); 
         }
       } else if (event.key === "ArrowRight") {
         if (current !== slides.length - 1) {
-          setCurrent(current + 1);
+          setAnimation({ transform: "translateX(-100%)", opacity: 0 });
+          setTimeout(() => {
+            setAnimation({
+              transform: "translateX(100%)",
+              opacity: 0,
+              immediate: true,
+            }); 
+            setCurrent(current + 1);
+            setAnimation({ transform: "translateX(0%)", opacity: 1 });
+          }, 300); 
         }
       }
     };
@@ -414,15 +446,15 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
     background,
   ]);
 
-  // 双击
+  // double click
   const handleClick = (event, element, onDoubleClick) => {
     if (clickTimeout) {
-      // 双击发生在500ms内
+      // double click with 500ms
       clearTimeout(clickTimeout);
       setClickTimeout(null);
       onDoubleClick(event, element);
     } else {
-      // 设置一个500ms的计时器来等待下次点击
+      // set 500ms timeout
       const timeout = setTimeout(() => {
         setClickTimeout(null);
       }, 500);
@@ -430,7 +462,6 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
     }
   };
 
-  // 删除selectedElement
   const handleDelete = () => {
     const newElements = elements.filter((e) => e.id !== selectedElement.id);
     const newPre = {
@@ -450,17 +481,17 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
       value: "#ffffff",
     };
     switch (appliedBackground.type) {
-      case "solid":
-        return { backgroundColor: appliedBackground.value };
-      case "gradient":
-        return { backgroundImage: appliedBackground.value };
-      case "image":
-        return {
-          backgroundImage: `url(${appliedBackground.value})`,
-          backgroundSize: "cover",
-        };
-      default:
-        return { backgroundColor: "#ffffff" };
+    case "solid":
+      return { backgroundColor: appliedBackground.value };
+    case "gradient":
+      return { backgroundImage: appliedBackground.value };
+    case "image":
+      return {
+        backgroundImage: `url(${appliedBackground.value})`,
+        backgroundSize: "cover",
+      };
+    default:
+      return { backgroundColor: "#ffffff" };
     }
   };
 
@@ -469,7 +500,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
       maxWidth="lg"
       sx={{ display: "flex", flexDirection: "row", mt: 1 }}
     >
-      {/* 元素icon */}
+      {/* Icons */}
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <IconButton onClick={() => setAddText(true)}>
           <TitleIcon fontSize="large" />
@@ -495,7 +526,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
       >
         {elements.map((element) => {
           if (element.type === "text") {
-            // 文字元素
+            // text element
             return (
               <Box
                 key={element.id}
@@ -649,7 +680,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
         })}
       </Paper>
 
-      {/* 右键Menu */}
+      {/* Menu */}
       <Menu
         anchorEl={menuAnchor}
         open={Boolean(menuAnchor)}
@@ -661,7 +692,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </Menu>
 
-      {/* 文字Dialog */}
+      {/* Text Dialog */}
       <TextDialog
         open={addText || editText}
         edit={editText}
@@ -675,8 +706,6 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
           const fontFamily = data.fontFamily || pre.fontFamily;
           delete data.fontFamily;
           if (addText) {
-            // 添加文字
-            // elements是单张幻灯片的所有内容
             elements.push(data);
             const newPre = {
               ...pre,
@@ -686,13 +715,8 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
               ),
             };
             setPre(newPre);
-            // setPres(pres.map((p) => (p.id === pre.id ? newPre : p)));
-            // await putStore(pres);
           } else {
             console.log("edit text");
-
-            // 编辑文字
-            // not element.id === data.id, because id is Date.now()
             const newElements = elements.map((element) =>
               element.id === selectedElement.id ? data : element
             );
@@ -705,18 +729,13 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
                 index === current ? newElements : slide
               ),
             };
-            // const newPres = pres.map((p) => (p.id === pre.id ? newPre : p));
             console.log("new pre", newPre);
-
             setPre(newPre);
-            // setPres(newPres);
-
-            // await putStore(newPres);
           }
         }}
       />
 
-      {/* 图片Dialog */}
+      {/* Image Dialog */}
       <ImageDialog
         open={addImage || editImage}
         edit={editImage}
@@ -752,7 +771,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
         }}
       />
 
-      {/* VideoDialog */}
+      {/* Video Dialog */}
 
       <VideoDialog
         open={addVideo || editVideo}
@@ -789,7 +808,7 @@ function Slide({ pre, setPre, current, setCurrent, props }) {
         }}
       />
 
-      {/* 代码块 */}
+      {/* Code Block */}
       <CodeDialog
         open={addCode || editCode}
         edit={editCode}
@@ -836,7 +855,6 @@ export default function Presentation() {
   const [toDeleteSlide, setToDeleteSlide] = useState(false);
   const [modifyName, setModifyName] = useState(false);
   const [current, setCurrent] = useState(0);
-  const [, setDirection] = useState("left");
   const [goBack, setGoBack] = useState(false);
   const [uploadThumbnail, setUploadThumbnail] = useState(false);
   const [background, setBackground] = useState(false);
@@ -850,7 +868,7 @@ export default function Presentation() {
   });
 
   const [slideProps, set] = useSpring(() => ({
-    transform: "translateX(0%)", // 初始状态: 当前幻灯片处于中间
+    transform: "translateX(0%)",
     opacity: 1,
     config: { tension: 300, friction: 30 },
   }));
@@ -955,7 +973,7 @@ export default function Presentation() {
           </IconButton>
         </Tooltip>
 
-        {/* 保存按钮 */}
+        {/* Save Button */}
         <Tooltip title="save presentation">
           <Fab
             variant="extended"
@@ -973,7 +991,7 @@ export default function Presentation() {
         </Tooltip>
       </Box>
 
-      {/* 画布 */}
+      {/* Slide */}
       <animated.div
         style={{
           ...slideProps,
@@ -988,11 +1006,12 @@ export default function Presentation() {
             modifyName,
             uploadThumbnail,
             background,
+            set,
           }}
         />
       </animated.div>
 
-      {/* 左箭头 */}
+      {/* Left Arrow */}
       <IconButton
         id="left-arrow"
         sx={{ position: "absolute", bottom: "50%", left: 0 }}
@@ -1000,17 +1019,20 @@ export default function Presentation() {
         onClick={() => {
           set({ transform: "translateX(100%)", opacity: 0 });
           setTimeout(() => {
-            set({ transform: "translateX(-100%)", opacity: 0, immediate: true }); // 这里添加了 immediate: true
+            set({
+              transform: "translateX(-100%)",
+              opacity: 0,
+              immediate: true,
+            }); 
             setCurrent(current - 1);
-            setDirection("right");
             set({ transform: "translateX(0%)", opacity: 1 });
-          }, 300); // 300ms 等待当前幻灯片完全消失
+          }, 300); 
         }}
       >
         <ArrowBackIosIcon />
       </IconButton>
 
-      {/* 右箭头 */}
+      {/* Right Arrow */}
       <IconButton
         id="right-arrow"
         sx={{ position: "absolute", bottom: "50%", right: 0 }}
@@ -1018,17 +1040,16 @@ export default function Presentation() {
         onClick={() => {
           set({ transform: "translateX(-100%)", opacity: 0 });
           setTimeout(() => {
-            set({ transform: "translateX(100%)", opacity: 0, immediate: true }); // 这里添加了 immediate: true
+            set({ transform: "translateX(100%)", opacity: 0, immediate: true }); 
             setCurrent(current + 1);
-            setDirection("left");
             set({ transform: "translateX(0%)", opacity: 1 });
-          }, 300); // 300ms 等待当前幻灯片完全消失
+          }, 300); 
         }}
       >
         <ArrowForwardIosIcon />
       </IconButton>
 
-      {/* 删除幻灯片 */}
+      {/* Delete current slide */}
       <ThemeProvider theme={theme}>
         <Tooltip title="delete this slide" placement="left">
           <Fab
@@ -1065,7 +1086,7 @@ export default function Presentation() {
         </Tooltip>
       </ThemeProvider>
 
-      {/* 创建幻灯片 */}
+      {/* Create a new slide */}
       <Tooltip title="create new slide" placement="left">
         <Fab
           color="primary"
@@ -1085,7 +1106,7 @@ export default function Presentation() {
         </Fab>
       </Tooltip>
 
-      {/* 预览 */}
+      {/* Preview */}
       <IconButton
         sx={{
           position: "absolute",
@@ -1104,7 +1125,7 @@ export default function Presentation() {
         <VisibilityIcon />
       </IconButton>
 
-      {/* 预览Dialog */}
+      {/* Preview Dialog */}
       <Dialog open={preview} onClose={() => setPreview(false)} fullWidth>
         <DialogTitle>Save before Preview</DialogTitle>
         <DialogContent>
@@ -1130,7 +1151,7 @@ export default function Presentation() {
         </DialogActions>
       </Dialog>
 
-      {/* 幻灯片数字 */}
+      {/* Slide Number */}
       <Box
         sx={{
           position: "absolute",

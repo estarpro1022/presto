@@ -45,7 +45,6 @@ function Register() {
       return;
     }
     setMatch(true);
-    // 在这里处理注册逻辑
     console.log("register:", { name: name, password });
 
     const body = JSON.stringify({
@@ -198,7 +197,7 @@ function Register() {
       </Box>
       <Snackbar
         open={open}
-        autoHideDuration={3000} // 设置自动消失时间，单位为毫秒
+        autoHideDuration={3000} 
         onClose={(event, reason) => {
           if (reason === "clickaway") {
             return;
@@ -207,7 +206,7 @@ function Register() {
           setErrorMsg("");
         }}
         message={errorMsg}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }} // 设置位置
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }} 
       />
       <Snackbar
         open={success}
