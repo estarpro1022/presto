@@ -38,6 +38,7 @@ const update = async (admins) =>
             body: JSON.stringify({ admins }),
           });
           if (!response.ok) {
+            log(response)
             reject(new Error("Writing to Vercel KV failed"));
           }
         } else {
