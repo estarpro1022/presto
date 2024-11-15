@@ -1,7 +1,7 @@
-import { createContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getStore } from "../request";
+import { PresentationContext } from "../config";
 
-export const PresentationContext = createContext(null);
 
 export const PresentationProvider = ({ children }) => {
   const [pres, setPres] = useState([]);
@@ -31,3 +31,5 @@ export const PresentationProvider = ({ children }) => {
     </PresentationContext.Provider>
   );
 };
+
+export { PresentationContext };
